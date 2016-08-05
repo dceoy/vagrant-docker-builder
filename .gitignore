@@ -1,4 +1,4 @@
 .vagrant/
 *.log
-proxy.sh
+proxy.yml
 share/

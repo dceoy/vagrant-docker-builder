@@ -67,28 +67,22 @@ Vagrant.configure("2") do |config|
   #   push.app = "YOUR_ATLAS_USERNAME/YOUR_APPLICATION_NAME"
   # end
 
-  if File.exist?("proxy.sh")
-    config.vm.provision "file", source: "proxy.sh", destination: "proxy.sh"
+  if File.exist?("proxy.yml") && Vagrant.has_plugin?("vagrant-proxyconf") then
+    require "yaml"
+    proxy_yml = YAML.load_file("proxy.yml")
+    config.proxy.http     = proxy_yml["http_proxy"]
+    config.proxy.https    = proxy_yml["https_proxy"]
+    config.proxy.no_proxy = proxy_yml["no_proxy"]
   end
 
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
-    [[ -f 'proxy.sh' ]] \
-      && source proxy.sh \
-      && mv proxy.sh /etc/profile.d/
+    sed -ie "s/^\\(127.0.0.1 .*\\)$/\\1 $(hostname)/" /etc/hosts && rm /etc/hostse
 
-    sed -ie "s/^\\(127.0.0.1 .*\\)$/\\1 $(hostname)/" /etc/hosts \
-      && rm /etc/hostse
-
-    [[ -n "${HTTP_PROXY}" ]] \
-      && echo "Acquire::http::proxy \\"${HTTP_PROXY}\\";" >> /etc/apt/apt.conf
-    [[ -n "${HTTPS_PROXY}" ]] \
-      && echo "Acquire::https::proxy \\"${HTTPS_PROXY}\\";" >> /etc/apt/apt.conf
-    apt-get -y update \
-      && apt-get -y upgrade \
-      && apt-get -y install zsh gcc make apt-transport-https ca-certificates linux-image-extra-$(uname -r)
+    apt-get -y update && apt-get -y upgrade
+    apt-get -y install zsh gcc make apt-transport-https ca-certificates linux-image-extra-$(uname -r)
 
     vbga_ver=$(curl http://download.virtualbox.org/virtualbox/LATEST.TXT)
     curl http://download.virtualbox.org/virtualbox/${vbga_ver}/VBoxGuestAdditions_${vbga_ver}.iso -o /tmp/vbga.iso
@@ -98,12 +92,7 @@ Vagrant.configure("2") do |config|
     apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
     echo 'deb https://apt.dockerproject.org/repo ubuntu-xenial main' > /etc/apt/sources.list.d/docker.list
     apt-cache policy docker-engine
-    apt-get -y update \
-      && apt-get -y install docker-engine
-    [[ -n "${HTTP_PROXY}" ]] \
-      && echo "export http_proxy=\\"${HTTP_PROXY}\\"" >> /etc/default/docker
-    [[ -n "${HTTPS_PROXY}" ]] \
-      && echo "export https_proxy=\\"${HTTPS_PROXY}\\"" >> /etc/default/docker
+    apt-get -y update && apt-get -y install docker-engine
     systemctl enable docker
     usermod -aG docker ubuntu
   SHELL
