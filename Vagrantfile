@@ -37,7 +37,6 @@ Vagrant.configure("2") do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  # config.vm.synced_folder "../data", "/vagrant_data"
   unless File.exist?("share/tmp/disable_synced_folder")
     config.vm.synced_folder "share", "/share"
     config.vm.synced_folder "share/tmp/docker", "/var/lib/docker/tmp"
@@ -47,15 +46,13 @@ Vagrant.configure("2") do |config|
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
   #
-  config.vm.provider "virtualbox" do |vb|
+  # config.vm.provider "virtualbox" do |vb|
   #   # Display the VirtualBox GUI when booting the machine
   #   vb.gui = true
-
-    # Customize the amount of memory on the VM:
-    vb.memory = "55705"
-
-    vb.cpus = 12
-  end
+  #
+  #   # Customize the amount of memory on the VM:
+  #   vb.memory = "1024"
+  # end
   #
   # View the documentation for the provider you are using for more
   # information on available options.
@@ -67,12 +64,20 @@ Vagrant.configure("2") do |config|
   #   push.app = "YOUR_ATLAS_USERNAME/YOUR_APPLICATION_NAME"
   # end
 
-  if File.exist?("proxy.yml") && Vagrant.has_plugin?("vagrant-proxyconf") then
+  if File.exist?("config.yml") then
     require "yaml"
-    proxy_yml = YAML.load_file("proxy.yml")
-    config.proxy.http     = proxy_yml["http_proxy"]
-    config.proxy.https    = proxy_yml["https_proxy"]
-    config.proxy.no_proxy = proxy_yml["no_proxy"]
+    yml = YAML.load_file("config.yml")
+
+    config.vm.provider "virtualbox" do |vb|
+      vb.memory = yml[:memory] if yml.has_key?(:memory)
+      vb.cpus = yml[:cpus] if yml.has_key?(:cpus)
+    end
+
+    if Vagrant.has_plugin?("vagrant-proxyconf") then
+      config.proxy.http = yml[:http_proxy] if yml.has_key?(:http_proxy)
+      config.proxy.https = yml[:https_proxy] if yml.has_key?(:https_proxy)
+      config.proxy.no_proxy = yml[:no_proxy] if yml.has_key?(:no_proxy)
+    end
   end
 
   # Enable provisioning with a shell script. Additional provisioners such as
