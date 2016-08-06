@@ -69,14 +69,14 @@ Vagrant.configure("2") do |config|
     yml = YAML.load_file("config.yml")
 
     config.vm.provider "virtualbox" do |vb|
-      vb.memory = yml[:memory] if yml.has_key?(:memory)
-      vb.cpus = yml[:cpus] if yml.has_key?(:cpus)
+      vb.memory = yml["memory"] if yml.has_key?("memory")
+      vb.cpus = yml["cpus"] if yml.has_key?("cpus")
     end
 
     if Vagrant.has_plugin?("vagrant-proxyconf") then
-      config.proxy.http = yml[:http_proxy] if yml.has_key?(:http_proxy)
-      config.proxy.https = yml[:https_proxy] if yml.has_key?(:https_proxy)
-      config.proxy.no_proxy = yml[:no_proxy] if yml.has_key?(:no_proxy)
+      config.proxy.http = yml["http_proxy"] if yml.has_key?("http_proxy")
+      config.proxy.https = yml["https_proxy"] if yml.has_key?("https_proxy")
+      config.proxy.no_proxy = yml["no_proxy"] if yml.has_key?("no_proxy")
     end
   end
 
