@@ -87,7 +87,7 @@ Vagrant.configure("2") do |config|
     sed -ie "s/^\\(127.0.0.1 .*\\)$/\\1 $(hostname)/" /etc/hosts && rm /etc/hostse
 
     apt-get -y update && apt-get -y upgrade
-    apt-get -y install zsh gcc make apt-transport-https ca-certificates linux-image-extra-$(uname -r)
+    apt-get -y install gcc make apt-transport-https ca-certificates linux-image-extra-$(uname -r)
 
     vbga_ver=$(curl http://download.virtualbox.org/virtualbox/LATEST.TXT)
     curl http://download.virtualbox.org/virtualbox/${vbga_ver}/VBoxGuestAdditions_${vbga_ver}.iso -o /tmp/vbga.iso
