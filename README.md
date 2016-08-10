@@ -1,5 +1,5 @@
-vagrant-docker-vm
-=================
+vbox-docker-builder
+===================
 
 Virtual machine builder using Vagrant and VirtualBox for use of Docker
 
@@ -14,7 +14,7 @@ Setup
 2.  Check out the repository.
 
     ```sh
-    $ git clone https://github.com/dceoy/vagrant-docker-vm.git ~/vm
+    $ git clone https://github.com/dceoy/vbox-docker-builder.git ~/vm
     $ cd ~/vm
     ```
 

@@ -22,7 +22,9 @@ fi
 SCRIPT_NAME='create_vm.sh'
 SCRIPT_VERSION='1.1.0'
 GUEST='[127.0.0.1]:2222'
-TMP_DIR="tmp"
+EXAMPLE_CONFIG_YML='example_config.yml'
+CONFIG_YML='config.yml'
+TMP_DIR='./tmp'
 DISABLE_SYNC_FLAG="${TMP_DIR}/disable_synced_folder"
 DOCKER_TMP_DIR="${TMP_DIR}/docker"
 
@@ -76,32 +78,32 @@ while [[ -n "${1}" ]]; do
   esac
 done
 
-echo "[Vagrant version]" && sudo_e "vagrant --version"
-echo "[VBoxManage version]" && sudo_e "VBoxManage --version"
+echo '[Vagrant version]' && sudo_e 'vagrant --version'
+echo '[VBoxManage version]' && sudo_e 'VBoxManage --version'
 echo
 
 [[ $(grep -cF ${GUEST} ~/.ssh/known_hosts) -gt 0 ]] && ssh-keygen -R ${GUEST}
 [[ -d "${DOCKER_TMP_DIR}" ]] || mkdir -p ${DOCKER_TMP_DIR}
-[[ -f 'config.yml' ]] || cp example_config.yml config.yml
+[[ -f "${CONFIG_YML}" ]] || cp ${CONFIG_YML} ${EXAMPLE_CONFIG_YML}
 
 if [[ $(grep -ce '^[^#]\+_proxy:' config.yml) -gt 0 ]]; then
   if [[ $(vagrant plugin list | grep -ce '^vagrant-proxyconf ') -eq 0 ]]; then
-    sudo_e "vagrant plugin install vagrant-proxyconf"
+    sudo_e 'vagrant plugin install vagrant-proxyconf'
   else
-    sudo_e "vagrant plugin update vagrant-proxyconf"
+    sudo_e 'vagrant plugin update vagrant-proxyconf'
   fi
 fi
 
-echo "This file disables \`config.vm.synced_folder\`" > ${DISABLE_SYNC_FLAG}
+echo 'This file disables `config.vm.synced_folder`' > ${DISABLE_SYNC_FLAG}
 echo
 
-sudo_e "vagrant up"
+sudo_e 'vagrant up'
 
 rm ${DISABLE_SYNC_FLAG}
 echo
 
 if [[ -n "${VM_RUN}" ]]; then
-  sudo_e "vagrant reload"
+  sudo_e 'vagrant reload'
 else
-  sudo_e "vagrant halt"
+  sudo_e 'vagrant halt'
 fi
