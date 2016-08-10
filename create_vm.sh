@@ -20,8 +20,7 @@ fi
 SCRIPT_NAME='create_vm.sh'
 SCRIPT_VERSION='1.0.0'
 GUEST='[127.0.0.1]:2222'
-SHARE_DIR="share"
-TMP_DIR="${SHARE_DIR}/tmp"
+TMP_DIR="tmp"
 DISABLE_SYNC_FLAG="${TMP_DIR}/disable_synced_folder"
 DOCKER_TMP_DIR="${TMP_DIR}/docker"
 
@@ -54,8 +53,13 @@ esac
 
 echo "[Vagrant version]" && vagrant --version
 echo "[VBoxManage version]" && VBoxManage --version
+echo
 
-if [[ -f 'config.yml' ]] && [[ "$(grep -ce '^[^#]\+_proxy:' config.yml)" -gt 0 ]]; then
+[[ "$(grep -cF ${GUEST} ~/.ssh/known_hosts)" -gt 0 ]] && ssh-keygen -R "${GUEST}"
+[[ -d "${DOCKER_TMP_DIR}" ]] || mkdir -p "${DOCKER_TMP_DIR}"
+[[ -f 'config.yml' ]] || cp example_config.yml config.yml
+
+if [[ "$(grep -ce '^[^#]\+_proxy:' config.yml)" -gt 0 ]]; then
   if [[ $(vagrant plugin list | grep -ce '^vagrant-proxyconf ') -eq 0 ]]; then
     vagrant plugin install vagrant-proxyconf
   else
@@ -63,10 +67,7 @@ if [[ -f 'config.yml' ]] && [[ "$(grep -ce '^[^#]\+_proxy:' config.yml)" -gt 0 ]
   fi
 fi
 
-[[ "$(grep -cF ${GUEST} ~/.ssh/known_hosts)" -gt 0 ]] && ssh-keygen -R "${GUEST}"
-[[ -d "${DOCKER_TMP_DIR}" ]] || mkdir -p "${DOCKER_TMP_DIR}"
-
-echo "\`config.vm.synced_folder\` is disabled." > "${DISABLE_SYNC_FLAG}"
+echo "This file disables \`config.vm.synced_folder\`" > "${DISABLE_SYNC_FLAG}"
 vagrant up
 rm "${DISABLE_SYNC_FLAG}"
 [[ -n "${VM_RUN}" ]] && vagrant reload || vagrant halt

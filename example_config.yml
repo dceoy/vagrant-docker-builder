@@ -1,10 +1,17 @@
 # Customized configurations of a virtual machine
+
+virtualbox:
+  gui: false
+  memory: 1024
+  cpus: 2
+
+synced_folder:
+  host_path: "share"
+  guest_path: "/share"
+
+# # If an HTTP proxy exists, set the following values before creating a VM.
 #
-# If you customize configurations, copy this file to `config.yml` and edit it.
-
-memory: 1024
-cpus: 2
-
-# http_proxy: "http://example.proxy.com:8080/"
-# https_proxy: "https://example.proxy.com:8080/"
-# no_proxy: "127.0.0.1,localhost"
+# proxy:
+#   http_proxy: "http://example.proxy.com:8080/"
+#   https_proxy: "https://example.proxy.com:8080/"
+#   no_proxy: "127.0.0.1,localhost"

@@ -1,5 +1,5 @@
 .vagrant/
 *.log
 config.yml
-share/*
-!.gitkeep
+tmp/
+share/

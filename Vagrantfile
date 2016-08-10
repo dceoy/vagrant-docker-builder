@@ -37,10 +37,7 @@ Vagrant.configure("2") do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  unless File.exist?("share/tmp/disable_synced_folder")
-    config.vm.synced_folder "share", "/share"
-    config.vm.synced_folder "share/tmp/docker", "/var/lib/docker/tmp"
-  end
+  # config.vm.synced_folder "../data", "/vagrant_data"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -68,15 +65,30 @@ Vagrant.configure("2") do |config|
     require "yaml"
     yml = YAML.load_file("config.yml")
 
-    config.vm.provider "virtualbox" do |vb|
-      vb.memory = yml["memory"] if yml.has_key?("memory")
-      vb.cpus = yml["cpus"] if yml.has_key?("cpus")
+    unless File.exist?("tmp/disable_synced_folder")
+      if yml.has_key?("synced_folder") then
+        synced = yml["synced_folder"]
+        synced_host_path = synced.has_key?("host_path") ? synced["host_path"] : "share"
+        synced_guest_path = synced.has_key?("guest_path") ? synced["guest_path"] : "/share"
+        config.vm.synced_folder synced_host_path, synced_guest_path, create: true
+      end
+      config.vm.synced_folder "tmp/docker", "/var/lib/docker/tmp", create: true
     end
 
-    if Vagrant.has_plugin?("vagrant-proxyconf") then
-      config.proxy.http = yml["http_proxy"] if yml.has_key?("http_proxy")
-      config.proxy.https = yml["https_proxy"] if yml.has_key?("https_proxy")
-      config.proxy.no_proxy = yml["no_proxy"] if yml.has_key?("no_proxy")
+    if yml.has_key?("virtualbox") then
+      vbox = yml["virtualbox"]
+      config.vm.provider "virtualbox" do |v|
+        v.gui = vbox["gui"] if vbox.has_key?("gui")
+        v.memory = vbox["memory"] if vbox.has_key?("memory")
+        v.cpus = vbox["cpus"] if vbox.has_key?("cpus")
+      end
+    end
+
+    if yml.has_key?("proxy") && Vagrant.has_plugin?("vagrant-proxyconf") then
+      proxy = yml["proxy"]
+      config.proxy.http = proxy["http_proxy"] if proxy.has_key?("http_proxy")
+      config.proxy.https = proxy["https_proxy"] if proxy.has_key?("https_proxy")
+      config.proxy.no_proxy = proxy["no_proxy"] if proxy.has_key?("no_proxy")
     end
   end
 

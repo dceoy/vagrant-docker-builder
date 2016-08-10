@@ -18,34 +18,27 @@ Setup
     $ cd ~/vm
     ```
 
+    If you use an HTTP proxy, set values at `config.yml` before creating a virtual machine.
+
+    ```sh
+    $ cp example_config.yml config.yml
+    $ vi config.yml # => edit
+    ```
+
 3.  Create a virtual machine.
 
     ```sh
     $ ./create_vm.sh
     ```
 
+    `create_vm.sh` copy `example_config.yml` to `config.yml` if `config.yml` does not exist.  
+    `config.yml` can be used to customize configurations.
+
 4.  Boot the virtual machine.
 
     ```sh
     $ vagrant up  # boot
-    ```
-
-    If you customize configurations such as memory, cpu, and http proxy, copy `example_config.yml` to `config.yml` and edit the contents.
-
-    ```sh
-    $ cp example_config.yml config.yml
-    $ vi config.yml
-    # => edit
-
-    $ vagrant reload  # reboot
-    ```
-
-    Run `vagrant help` for more information about the usage of `vagrant`.
-
-5.  Use the virtual machine.
-
-    ```sh
     $ vagrant ssh # connect via ssh
     ```
 
-    `share` is available as a synced directory (`/share` on the guest).
+    Run `vagrant help` for more information about the usage of `vagrant`.
