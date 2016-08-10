@@ -1,7 +1,7 @@
 vagrant-docker-vm
 =================
 
-Vagrantfile and its helper script for use of Docker on Vagrant and VirtualBox
+Virtual machine builder using Vagrant and VirtualBox for use of Docker
 
 Host: Mac OS X or Linux  
 Guest: Ubuntu 16.04 LTS (Xenial Xerus)
@@ -18,7 +18,8 @@ Setup
     $ cd ~/vm
     ```
 
-    If you use an HTTP proxy, set values at `config.yml` before creating a virtual machine.
+    If you use an HTTP proxy, set values at `config.yml` before creating a virtual machine.  
+    `config.yml` can be used to customize configurations.
 
     ```sh
     $ cp example_config.yml config.yml
@@ -31,8 +32,7 @@ Setup
     $ ./create_vm.sh
     ```
 
-    `create_vm.sh` copy `example_config.yml` to `config.yml` if `config.yml` does not exist.  
-    `config.yml` can be used to customize configurations.
+    Run `./create_vm.sh --help` for the usage on a command.
 
 4.  Boot the virtual machine.
 
@@ -41,4 +41,4 @@ Setup
     $ vagrant ssh # connect via ssh
     ```
 
-    Run `vagrant help` for more information about the usage of `vagrant`.
+    See [the documents for Vagrant](https://www.vagrantup.com/docs/cli/) for more information about `vagrant` command.
