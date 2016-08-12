@@ -9,6 +9,12 @@ synced_folder:
   host_path: "share"
   guest_path: "/share"
 
+# forwarded_port:
+#   - guest: 22
+#     host: 2200
+#   - guest: 80
+#     host: 8000
+#
 # # If an HTTP proxy exists, set the following values before creating a VM.
 #
 # proxy:

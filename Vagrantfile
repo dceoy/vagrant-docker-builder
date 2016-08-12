@@ -84,6 +84,12 @@ Vagrant.configure("2") do |config|
       end
     end
 
+    if yml.has_key?("forwarded_port") then
+      for fp in yml["forwarded_port"] do
+        config.vm.network "forwarded_port", guest: fp["guest"], host: fp["host"]
+      end
+    end
+
     if yml.has_key?("proxy") && Vagrant.has_plugin?("vagrant-proxyconf") then
       proxy = yml["proxy"]
       config.proxy.http = proxy["http_proxy"] if proxy.has_key?("http_proxy")
