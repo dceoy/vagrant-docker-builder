@@ -67,10 +67,9 @@ Vagrant.configure("2") do |config|
 
     unless File.exist?("tmp/disable_synced_folder")
       if yml.has_key?("synced_folder") then
-        synced = yml["synced_folder"]
-        synced_host_path = synced.has_key?("host_path") ? synced["host_path"] : "share"
-        synced_guest_path = synced.has_key?("guest_path") ? synced["guest_path"] : "/share"
-        config.vm.synced_folder synced_host_path, synced_guest_path, create: true
+        for sf in yml["synced_folder"] do
+          config.vm.synced_folder sf["host_path"], sf["guest_path"], create: true
+        end
       end
       config.vm.synced_folder "tmp/docker", "/var/lib/docker/tmp", create: true
     end
@@ -86,7 +85,7 @@ Vagrant.configure("2") do |config|
 
     if yml.has_key?("forwarded_port") then
       for fp in yml["forwarded_port"] do
-        config.vm.network "forwarded_port", guest: fp["guest"], host: fp["host"]
+        config.vm.network "forwarded_port", guest: fp["guest_port"], host: fp["host_port"]
       end
     end
 
