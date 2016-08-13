@@ -84,7 +84,7 @@ echo
 
 [[ $(grep -cF ${GUEST} ~/.ssh/known_hosts) -gt 0 ]] && ssh-keygen -R ${GUEST}
 [[ -d "${DOCKER_TMP_DIR}" ]] || mkdir -p ${DOCKER_TMP_DIR}
-[[ -f "${CONFIG_YML}" ]] || cp ${CONFIG_YML} ${EXAMPLE_CONFIG_YML}
+[[ -f "${CONFIG_YML}" ]] || cp ${EXAMPLE_CONFIG_YML} ${CONFIG_YML}
 
 if [[ $(grep -ce '^[^#]\+_proxy:' config.yml) -gt 0 ]]; then
   if [[ $(vagrant plugin list | grep -ce '^vagrant-proxyconf ') -eq 0 ]]; then
