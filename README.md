@@ -30,6 +30,9 @@ Setup
 
     ```sh
     $ ./create_vm.sh
+
+    # if you use `sudo` for `vagrant`:
+    $ ./create_vm.sh --sudo
     ```
 
     Run `./create_vm.sh --help` for the usage on a command.
@@ -39,6 +42,10 @@ Setup
     ```sh
     $ vagrant up  # boot
     $ vagrant ssh # connect via ssh
+
+    # if you use `sudo` for `vagrant`:
+    $ sudo -E vagrant up
+    $ sudo -E vagrant ssh
     ```
 
     See [the documents for Vagrant](https://www.vagrantup.com/docs/cli/) for more information about `vagrant` command.

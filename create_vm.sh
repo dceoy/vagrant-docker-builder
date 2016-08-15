@@ -20,7 +20,8 @@ if [[ "${1}" = '--debug' ]]; then
 fi
 
 SCRIPT_NAME='create_vm.sh'
-SCRIPT_VERSION='1.1.0'
+SCRIPT_VERSION='1.1.1'
+VM_BOX='ubuntu/xenial64'
 GUEST='[127.0.0.1]:2222'
 EXAMPLE_CONFIG_YML='example_config.yml'
 CONFIG_YML='config.yml'
@@ -66,6 +67,7 @@ while [[ -n "${1}" ]]; do
       ;;
     '--sudo' )
       SUDO_E=1
+      sudo -v
       shift 1
       ;;
     '--run' )
@@ -87,18 +89,22 @@ echo
 [[ -f "${CONFIG_YML}" ]] || cp ${EXAMPLE_CONFIG_YML} ${CONFIG_YML}
 
 if [[ $(grep -ce '^[^#]\+_proxy:' config.yml) -gt 0 ]]; then
-  if [[ $(vagrant plugin list | grep -ce '^vagrant-proxyconf ') -eq 0 ]]; then
+  if [[ $(sudo_e 'vagrant plugin list' | grep -ce '^vagrant-proxyconf ') -eq 0 ]]; then
     sudo_e 'vagrant plugin install vagrant-proxyconf'
   else
     sudo_e 'vagrant plugin update vagrant-proxyconf'
   fi
 fi
 
-echo 'This file disables `config.vm.synced_folder`' > ${DISABLE_SYNC_FLAG}
+if [[ $(sudo_e 'vagrant box list' | grep -ce "^${VM_BOX} ") -eq 0 ]]; then
+  sudo_e "vagrant box add ${VM_BOX}"
+else
+  sudo_e "vagrant box update --box ${VM_BOX}"
+fi
+
 echo
-
+echo 'This file disables `config.vm.synced_folder`' > ${DISABLE_SYNC_FLAG}
 sudo_e 'vagrant up'
-
 rm ${DISABLE_SYNC_FLAG}
 echo
 
