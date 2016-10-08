@@ -1,7 +1,7 @@
-vagrant-docker-builder
-======================
+vagrant-vbox-builder
+====================
 
-Virtual machine builder using Vagrant and VirtualBox for use of Docker
+Virtual machine builder using Vagrant and VirtualBox with Docker
 
 Host: Mac OS X or Linux  
 Guest: Ubuntu 16.04 LTS (Xenial Xerus)
@@ -14,7 +14,7 @@ Setup
 2.  Check out the repository.
 
     ```sh
-    $ git clone https://github.com/dceoy/vagrant-docker-builder.git ~/vm
+    $ git clone https://github.com/dceoy/vagrant-vbox-builder.git ~/vm
     $ cd ~/vm
     ```
 
